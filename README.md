@@ -19,7 +19,7 @@
 示例
 
 ```
-// personal_token存储在1password的blockchain保险库中，根据自己的情况修改，`op://`不要动
+// personal_token存储在1password的blockchain保险库中，根据自己的情况修改，op://不要动
 export const personal_token = 'op://blockchain/personal_token'
 ```
 
@@ -49,7 +49,7 @@ console.log(text)
 id,address,enPrivateKey
 1,bc1p0xlw9r7f63m5k4q8z8v49q35t9q0,L1k3wqhiuguv1Ki3pLnuiybr0vm
 2,bc1p34x5y9x9q6u9w57h8j9z53l8z7xg,Pkmnuhfh7hbidcuin8877g2b1ns
-3,bc1p76x7zywzun08v2l2wz92x8t4w4kq,Pkmnuhfh7hbidcuin8877g2b1ns
+3,bc1p34x5y9x9q6u9w57h8j9z53l8z7xg,Pkmnuhfh7hbidcuin8877g2b1ns
 ...
 ```
 
@@ -63,10 +63,10 @@ await enCryptColumn('./crypt_module/wallet.csv', 'enPrivateKey');
 id,address,enPrivateKey
 1,bc1p0xlw9r7f63m5k4q8z8v49q35t9q0,d825f5cba11602c68155999bdbbc7bb60e7bf118c52e8b30674c1f337a179715e897c5673761b78ba7e217b7b39725be2b2b0e878933ac
 2,bc1p34x5y9x9q6u9w57h8j9z53l8z7xg,d63b0bea4c42bd610a895ff209d7405d71a9cd623dacccdf61a4cf19c2494305f6858216272841c60d149923309d68486e9d10abe96016
-3,bc1p76x7zywzun08v2l2wz92x8t4w4kq,3fa81aae6b08911dc05b3d7e4cf7dfc12656ae8a800781274085a3976831b3a95db93740f05e4118f6b58dad09b818f8b91ebb1370f33c
+3,bc1p34x5y9x9q6u9w57h8j9z53l8z7xg,3fa81aae6b08911dc05b3d7e4cf7dfc12656ae8a800781274085a3976831b3a95db93740f05e4118f6b58dad09b818f8b91ebb1370f33c
 ...
 ```
 
 >tips：通过第2、3条enPrivateKey数据可知，就算相同的数据加密出来也是不一样的，提高安全性。
 
-目前大的应用场景就是`enCryptColumn`加密钱包文件的私钥、助记词等字段。使用的时候用到哪个就用`deCryptText`解密
+目前大的应用场景就是使用`enCryptColumn`批量加密钱包文件的私钥、助记词等字段，安全存储。使用的时候用到哪个就用`deCryptText`解密。
