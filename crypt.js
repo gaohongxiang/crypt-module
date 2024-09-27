@@ -128,6 +128,3 @@ export async function decryptColumn(filePath, columnName) {
     const csvContent = Papa.unparse(parsedData.data);
     fs.writeFileSync(filePath, csvContent);
 }
-
-const text = await encryptText('111')
-console.log(text)
