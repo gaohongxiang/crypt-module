@@ -1,0 +1,16 @@
+{
+  "name": "crypt_module",
+  "version": "1.0.0",
+  "description": "结合1password,用于加解密文本",
+  "main": "crypt.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "gaohongxiang",
+  "license": "ISC",
+  "dependencies": {
+    "papaparse": "^5.4.1"
+  }
+}
