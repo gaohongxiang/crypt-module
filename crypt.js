@@ -29,7 +29,7 @@ import { personal_token } from './config.js';
  * @param {string} text  需要加密的文本
  * @returns {string} 返回加密后的密文
 */
-export async function encryptText(text) {
+export async function enCryptText(text) {
     try {                                                 
         // 如果 KEY 还没有设置,获取 KEY 密钥           
         if(!process.env.KEY) {                    
@@ -62,7 +62,7 @@ export async function encryptText(text) {
  * @param {string} encryptedText 密文 
  * @returns {string} 明文
  */
-export async function decryptText(encryptedText) {
+export async function deCryptText(encryptedText) {
     try {
       // 获取密钥 
       if(!process.env.KEY) {
@@ -97,13 +97,13 @@ export async function decryptText(encryptedText) {
  * @param {string} filePath - CSV 文件的路径。
  * @param {string} columnName - 要加密的列名。
  */
-export async function encryptColumn(filePath, columnName) {
+export async function enCryptColumn(filePath, columnName) {
     // 读取文件并解析 CSV 数据
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const parsedData = Papa.parse(fileContent, { header: true, skipEmptyLines: true }); //skipEmptyLines跳过空行
     // 对指定列进行加密
     for (const row of parsedData.data) {
-        row[columnName] = await encryptText(row[columnName]);
+        row[columnName] = await enCryptText(row[columnName]);
     }
     // 将处理后的数据保存回原文件
     const csvContent = Papa.unparse(parsedData.data);
@@ -116,13 +116,13 @@ export async function encryptColumn(filePath, columnName) {
  * @param {string} filePath - CSV 文件的路径。
  * @param {string} columnName - 要解密的列名。
  */
-export async function decryptColumn(filePath, columnName) {
+export async function deCryptColumn(filePath, columnName) {
     // 读取文件并解析 CSV 数据
     const fileContent = fs.readFileSync(filePath, 'utf8');
     const parsedData = Papa.parse(fileContent, { header: true, skipEmptyLines: true });
     // 对指定列进行解密
     for (const row of parsedData.data) {
-        row[columnName] = await decryptText(row[columnName]);
+        row[columnName] = await deCryptText(row[columnName]);
     }
     // 将处理后的数据保存回原文件
     const csvContent = Papa.unparse(parsedData.data);
