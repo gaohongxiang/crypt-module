@@ -1,8 +1,11 @@
 import fs from 'fs';
 import crypto from 'crypto';
-import Papa from 'papaparse';
-import { parseToken } from './onepassword.js';
+import { promisify } from 'util';
+import { parse } from 'csv-parse';
+import { stringify } from 'csv-stringify';
 import { personal_token } from './config.js';
+import { parseToken } from './onepassword.js';
+
 /**
  * 使用crypto的aes-256-gcm算法（等同于python的cryptography库的AESGCM模式）对敏感数据加解密,确保数据在传输或存储过程中的保密性和完整性。此模式提供了高效的认证和加密, 因此被认为是最好的加密模式之一。
  * 需要三个参数
@@ -99,15 +102,25 @@ export async function deCryptText(encryptedText) {
  */
 export async function enCryptColumn(filePath, columnName) {
     // 读取文件并解析 CSV 数据
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const parsedData = Papa.parse(fileContent, { header: true, skipEmptyLines: true }); //skipEmptyLines跳过空行
+    const fileStream = fs.createReadStream(filePath);
+    const parser = fileStream.pipe(parse({
+        columns: true, // 第一行为列名
+        skip_empty_lines: true // 跳过空行
+    }));
+
     // 对指定列进行加密
-    for (const row of parsedData.data) {
-        row[columnName] = await enCryptText(row[columnName]);
+    const results = [];
+    for await (const row of parser) {
+        row[columnName] = await enCryptText(row[columnName]); // 加密指定列
+        results.push(row); // 将处理后的行推入结果数组
     }
+    
+    // 将 stringify 转换为 Promise 风格
+    const stringifyAsync = promisify(stringify); 
+    // 将结果数组转换为 CSV 格式
+    const csvContent = await stringifyAsync(results, { header: true });
     // 将处理后的数据保存回原文件
-    const csvContent = Papa.unparse(parsedData.data);
-    fs.writeFileSync(filePath, csvContent);
+    await fs.promises.writeFile(filePath, csvContent);
 }
 
 /**
@@ -118,13 +131,23 @@ export async function enCryptColumn(filePath, columnName) {
  */
 export async function deCryptColumn(filePath, columnName) {
     // 读取文件并解析 CSV 数据
-    const fileContent = fs.readFileSync(filePath, 'utf8');
-    const parsedData = Papa.parse(fileContent, { header: true, skipEmptyLines: true });
+    const fileStream = fs.createReadStream(filePath);
+    const parser = fileStream.pipe(parse({
+        columns: true, // 第一行为列名
+        skip_empty_lines: true // 跳过空行
+    }));
+
     // 对指定列进行解密
-    for (const row of parsedData.data) {
-        row[columnName] = await deCryptText(row[columnName]);
+    const results = [];
+    for await (const row of parser) {
+        row[columnName] = await deCryptText(row[columnName]); // 加密指定列
+        results.push(row); // 将处理后的行推入结果数组
     }
+    
+    // 将 stringify 转换为 Promise 风格
+    const stringifyAsync = promisify(stringify); 
+    // 将结果数组转换为 CSV 格式
+    const csvContent = await stringifyAsync(results, { header: true });
     // 将处理后的数据保存回原文件
-    const csvContent = Papa.unparse(parsedData.data);
-    fs.writeFileSync(filePath, csvContent);
+    await fs.promises.writeFile(filePath, csvContent);
 }
