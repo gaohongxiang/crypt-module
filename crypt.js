@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { promisify } from 'util';
 import { parse } from 'csv-parse';
 import { stringify } from 'csv-stringify';
-import { personal_token } from './config.js';
 import { parseToken } from './onepassword.js';
 
 /**
@@ -21,11 +20,19 @@ import { parseToken } from './onepassword.js';
  * 解密时拆开，authTag来验证数据的完整性。
  */
 
-// 这种方法不管用没用到都会加载。
-// if(!process.env.KEY) {
-//     const KEY = await parseToken(personal_token);
-//     process.env.KEY = KEY
-// }
+let tokenPath = null;
+
+/**
+ * 初始化个人令牌路径。
+ * 
+ * @param {string} tokenPath - 个人令牌的文件路径，用于存储或访问令牌信息。
+ * @returns {Promise<void>} - 该函数返回一个 Promise，表示初始化操作的完成。
+ * @example
+ * await initialize('/path/to/token');
+ */
+export async function initialize(personalTokenPath) {
+    tokenPath = personalTokenPath;
+}
 
 /** 
  * 使用 AES-256-GCM 对字符串进行加密
@@ -33,10 +40,13 @@ import { parseToken } from './onepassword.js';
  * @returns {string} 返回加密后的密文
 */
 export async function enCryptText(text) {
-    try {                                                 
+    try {        
+        if (!tokenPath) {
+            throw new Error('密钥未设置. 请先调用initialize().');
+        }                                         
         // 如果 KEY 还没有设置,获取 KEY 密钥           
         if(!process.env.KEY) {                    
-            process.env.KEY = await parseToken(personal_token);
+            process.env.KEY = await parseToken(tokenPath);
         }
         // 使用密钥字符串获取密钥字节数组
         const passwordBytes = crypto.createHash('sha256').update(process.env.KEY).digest();                
@@ -67,30 +77,33 @@ export async function enCryptText(text) {
  */
 export async function deCryptText(encryptedText) {
     try {
-      // 获取密钥 
-      if(!process.env.KEY) {
-        process.env.KEY = await parseToken(personal_token);
-      }
-      // 使用密钥字符串获取密钥字节数组
-      const passwordBytes = crypto.createHash('sha256').update(process.env.KEY).digest();
-      // 提取 IV
-      const iv = Buffer.from(encryptedText.slice(0, 24), 'hex'); 
-      // 提取密文
-      const encrypted = encryptedText.slice(24, -32); 
-      // 提取 authTag  
-      const authTag = Buffer.from(encryptedText.slice(-32), 'hex'); 
-      // 创建解密器,使用 IV 和密钥   
-      const decipher = crypto.createDecipheriv('aes-256-gcm', passwordBytes, iv);
-      // 设置 authTag ,用于验证密文的完整性  
-      decipher.setAuthTag(authTag); 
-      // 执行解密操作      
-      let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
-      // 返回解密后的明文
-      return decrypted;
+        if (!tokenPath) {
+            throw new Error('密钥未设置. 请先调用initialize().');
+        }  
+        // 获取密钥 
+        if(!process.env.KEY) {
+            process.env.KEY = await parseToken(tokenPath);
+        }
+        // 使用密钥字符串获取密钥字节数组
+        const passwordBytes = crypto.createHash('sha256').update(process.env.KEY).digest();
+        // 提取 IV
+        const iv = Buffer.from(encryptedText.slice(0, 24), 'hex'); 
+        // 提取密文
+        const encrypted = encryptedText.slice(24, -32); 
+        // 提取 authTag  
+        const authTag = Buffer.from(encryptedText.slice(-32), 'hex'); 
+        // 创建解密器,使用 IV 和密钥   
+        const decipher = crypto.createDecipheriv('aes-256-gcm', passwordBytes, iv);
+        // 设置 authTag ,用于验证密文的完整性  
+        decipher.setAuthTag(authTag); 
+        // 执行解密操作      
+        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+        decrypted += decipher.final('utf8');
+        // 返回解密后的明文
+        return decrypted;
     } catch(error) {
-      console.log('解密失败', error)
-      return null
+        console.log('解密失败', error)
+        return null
     }
 }
 
