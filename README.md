@@ -10,27 +10,26 @@
 
 1、默认你已经熟悉使用1password密码管理器了，客户端需要勾选`设置->开发者->与1Password CLI 集成`选项。如果没有1password，可在此处了解:https://1password.com
 
-2、创建一个密码，复制路径。此密码即`config.js`文件中的`personal_token`
+2、创建一个密码，复制路径。
 
-### 配置文件
-
-`config-example.js`为示例配置文件。存储你在1password中创建的密码的路径。需要在同目录下创建一个`config.js`文件，将你真实的`personal_token`路径放进去
-
-示例
-
-```
-// personal_token存储在1password的blockchain保险库中，根据自己的情况修改，op://不要动
-export const personal_token = 'op://blockchain/personal_token'
-```
 
 ### 使用
 
-第一次使用需要先安装依赖
+1、下载包
 ```
-npm install
+npm install crypt_module
 ```
 
-加解密文本
+2、初始化personalTokenPath
+
+此personalTokenPath就是存储在1password的密钥的路径(`op://`后面的内容）。根据自己的实际情况修改路径
+
+```
+await initialize('op://blockchain/personaToken')
+```
+
+
+3、加解密文本
 
 ```
 const text = 'hello web3';
@@ -42,7 +41,7 @@ const text = await deCryptText(enText);
 console.log(text)
 ```
 
-加密某列文本
+4、加密某列文本
 
 假设有一个`wallet.csv`文件，存放地址、私钥等信息，很显然，私钥不能明文存储。这个时候就需要给私钥这一列数据加密
 ```
