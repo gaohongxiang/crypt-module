@@ -9,7 +9,7 @@
   "type": "module",
   "keywords": [],
   "author": "gaohongxiang",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "csv-parse": "^5.5.6",
     "csv-stringify": "^6.5.1"
