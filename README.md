@@ -20,7 +20,13 @@
 npm install crypt_module
 ```
 
-2、初始化personalTokenPath
+2、导入包
+```
+import { initialize, enCryptText, deCryptText, enCryptColumn, deCryptColumn } from 'crypt_module';
+
+```
+
+3、初始化personalTokenPath
 
 此personalTokenPath就是存储在1password的密钥的路径(`op://`后面的内容）。根据自己的实际情况修改路径
 
@@ -29,7 +35,7 @@ await initialize('op://blockchain/personaToken')
 ```
 
 
-3、加解密文本
+4、加解密文本
 
 ```
 const text = 'hello web3';
@@ -41,7 +47,7 @@ const text = await deCryptText(enText);
 console.log(text)
 ```
 
-4、加密某列文本
+5、加密某列文本
 
 假设有一个`wallet.csv`文件，存放地址、私钥等信息，很显然，私钥不能明文存储。这个时候就需要给私钥这一列数据加密
 ```
