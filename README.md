@@ -17,12 +17,12 @@
 
 1、下载包
 ```
-npm install ghx_crypt_module
+npm install ghx-crypt-module
 ```
 
 2、导入包
 ```
-import { initialize, enCryptText, deCryptText, enCryptColumn, deCryptColumn } from 'ghx_crypt_module';
+import { initialize, enCryptText, deCryptText, enCryptColumn, deCryptColumn } from 'ghx-crypt-module';
 
 ```
 
