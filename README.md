@@ -1,4 +1,4 @@
-# crypt_module
+# crypt-module
 
 本模块通过结合1password，用于加解密文本。之所以采用1password，是因为加解密时可以用指纹操作，解锁1password，获取存储的密码，然后执行加解密操作，避免了每次手输密码的繁琐。兼顾安全和便捷。
 
