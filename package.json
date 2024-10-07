@@ -1,6 +1,6 @@
 {
   "name": "ghx-crypt-module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "结合1password,用于加解密文本",
   "main": "crypt.js",
   "scripts": {
